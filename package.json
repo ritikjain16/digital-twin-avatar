@@ -8,6 +8,12 @@
     "frontend",
     "backend"
   ],
+  "overrides": {
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "@types/react": "19.1.8",
+    "@types/react-dom": "19.1.6"
+  },
   "scripts": {
     "dev": "concurrently \"npm run dev --workspace backend\" \"npm run dev --workspace frontend\"",
     "build": "npm run build --workspace backend && npm run build --workspace frontend",
