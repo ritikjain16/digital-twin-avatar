@@ -1,0 +1,64 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String         @id @default(cuid())
+  email        String         @unique
+  name         String
+  passwordHash String
+  avatarUrl    String?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  documents    Document[]
+  conversations Conversation[]
+}
+
+model Document {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String
+  source    String
+  kind      String
+  text      String
+  metadata  Json
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  chunks    Chunk[]
+}
+
+model Chunk {
+  id         String   @id @default(cuid())
+  documentId String
+  content    String
+  embedding  Json
+  metadata   Json
+  createdAt  DateTime @default(now())
+  document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+}
+
+model Conversation {
+  id        String    @id @default(cuid())
+  userId    String
+  mode      String
+  title     String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages  Message[]
+}
+
+model Message {
+  id             String       @id @default(cuid())
+  conversationId String
+  role           String
+  content        String
+  metadata       Json
+  createdAt      DateTime     @default(now())
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+}
